@@ -112,4 +112,18 @@
     <!-- ################################################################### -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
+    <launchImage path="icon/Default.png" width="320" height="480" />
+    <launchImage path="icon/Default@2x.png" width="640" height="960" />
+    <launchImage path="icon/Default-Portrait~ipad.png" width="768" height="1024" />
+    <launchImage path="icon/Default-Portrait@2x~ipad.png" width="1536" height="2048" />
+    <launchImage path="icon/Default-Landscape~ipad.png" width="1024" height="768" />
+    <launchImage path="icon/Default-Landscape@2x~ipad.png" width="2048" height="1536" />
+    <icon path="Icon.png" size="57" />
+    <icon path="Icon@2x.png" size="114" />
+    <icon path="Icon-60.png" size="60" />
+    <icon path="Icon-60@2x.png" size="120" />
+    <icon path="Icon-72.png" size="72" />
+    <icon path="Icon-72@2x.png" size="144" />
+    <icon path="Icon-76.png" size="76" />
+    <icon path="Icon-76@2x.png" size="152" />
 </project>
