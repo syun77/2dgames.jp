@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<!------------------------------APPLICATION SETTINGS---------------------------->
-	
+    <!-- ################################################################### -->
+	<!-- APPLICATION SETTINGS -->
+    <!-- ################################################################### -->
+
 	<app title="MyProject" file="2dgames_jp" main="Main" version="1.0.0" company="2dgames.jp" />
-	
-	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
-	<!--or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"!-->
+
+    <!-- ################################################################### -->
+    <!-- For ios settings -->
+    <!-- ################################################################### -->
+    <meta title="MyProject" package="jp.2dgames.test" version="1.0.0" company="2dgames.jp" />
+    <ios deployment="5" binaries="armv7" devices="iphone" />
+    <ios linker-flags="" prerendered-icon="false" />
+    <window hardware="true" allow-shaders="true" require-shaders="true" if="cpp"/>
+    <window vsync="true" antialiasing="4" if="cpp" />
+
+	<!-- The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
+	<!-- or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"! -->
 	<app preloader="flixel.system.FlxPreloader" />
 	
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2 -->
 	<set name="SWF_VERSION" value="11.8" />
-	
-	<!--------------------------------WINDOW SETTINGS------------------------------->
-	
+
+    <!-- ################################################################### -->
+	<!-- WINDOW SETTINGS -->
+    <!-- ################################################################### -->
+
 	<!--These window settings apply to all targets-->
 	<window width="640" height="480" fps="60" background="#000000" hardware="true" vsync="true" />
 	
@@ -24,14 +37,30 @@
 	
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
-	
-	<!--------------------------------PATHS SETTINGS-------------------------------->
-	
+
+    <!-- ################################################################### -->
+	<!-- PATHS SETTINGS -->
+    <!-- ################################################################### -->
+
 	<set name="BUILD_DIR" value="export" />
 	<classpath name="source" />
 	<assets path="assets" />
-	
-	<!--------------------------------LIBRARIES------------------------------------->
+    <assets path="assets/music" if="flash" exclude="ogg">
+        <!--sound path="trance003.mp3" id="001" /-->
+    </assets>
+    <assets path="assets/sounds" if="flash" exclude="ogg">
+        <!--sound path="push.mp3" id="push" /-->
+    </assets>
+    <assets path="assets/music" unless="flash">
+        <!--sound path="trance003.ogg" id="001" /-->
+    </assets>
+    <assets path="assets/sounds" unless="flash">
+        <!--sound path="push.ogg" id="push" /-->
+    </assets>
+
+    <!-- ################################################################### -->
+	<!-- LIBRARIES -->
+    <!-- ################################################################### -->
 
 	<haxelib name="flixel"/>
 	
@@ -43,9 +72,11 @@
 	
 	<!--In case you want to use nape with flixel-->
 	<!--haxelib name="nape" /-->
-	
-	<!--------------------------------HAXEDEFINES----------------------------------->
-	
+
+    <!-- ################################################################### -->
+	<!-- HAXEDEFINES -->
+    <!-- ################################################################### -->
+
 	<!--Enable the Flixel core recording system-->
 	<!--haxedef name="FLX_RECORD" /-->
 	
@@ -58,7 +89,7 @@
 	<!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
 	<!--haxedef name="FLX_NO_MOUSE" if="mobile" /-->
 	<!--haxedef name="FLX_NO_KEYBOARD" if="mobile" /-->
-	<!--haxedef name="FLX_NO_TOUCH" if="desktop" /-->
+	<!haxedef name="FLX_NO_TOUCH" if="desktop" />
 	<!--haxedef name="FLX_NO_GAMEPAD" /-->
 	
 	<!--Disable the Flixel core sound tray-->
@@ -75,8 +106,10 @@
 	
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
-	
-	<!--------------------------------CUSTOM---------------------------------------->
-	
+
+    <!-- ################################################################### -->
+	<!-- CUSTOM -->
+    <!-- ################################################################### -->
+
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 </project>
