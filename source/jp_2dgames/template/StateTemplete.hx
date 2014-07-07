@@ -1,4 +1,4 @@
-package;
+package jp_2dgames.template;
 
 import flixel.FlxState;
 
