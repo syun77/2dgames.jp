@@ -1,10 +1,11 @@
 package jp_2dgames;
 
-import flixel.util.FlxPoint;
+
 /**
  * ２次元マップクラス
  * @author syun
  */
+import flixel.util.FlxPoint;
 class Layer2D {
     public var m_Default:Int = 0; // デフォルト値
     public var m_OutOfRange:Int = -1; // 範囲外を指定した際のエラー値
@@ -13,12 +14,13 @@ class Layer2D {
     private var _pool:Map<Int, Int>;
     public var width(get_width, null):Int;
     public var height(get_height, null):Int;
+    public var pool(get, null):Map<Int, Int>;
 
     /**
-	 * コンストラクタ
-	 * @param	w 幅
-	 * @param	h 高さ
-	 */
+     * コンストラクタ
+     * @param w 幅
+     * @param h 高さ
+     */
 
     public function new(w:Int=0, h:Int=0) {
         if(w > 0 && h > 0) {
@@ -32,6 +34,10 @@ class Layer2D {
 
     private function get_height() {
         return _height;
+    }
+
+    private function get_pool():Map<Int, Int> {
+        return _pool;
     }
 
     public function initialize(w:Int, h:Int):Void {
@@ -50,6 +56,31 @@ class Layer2D {
                 }
             }
         }
+    }
+
+    public function copyRectDestination(layer:Layer2D, destX:Int, destY:Int, srcX:Int = 0, srcY:Int = 0, srcW:Int = 0, srcH:Int = 0):Void {
+        if(srcW <= 0) { srcW = layer.width; }
+        if(srcH <= 0) { srcH = layer.height; }
+
+        if(srcW == layer.width && srcH == layer.height) {
+            // 高速コピー
+            for(idx in layer.pool.keys()) {
+                var i = idx%layer.width;
+                var j = Math.floor(idx/layer.width);
+                var v = layer.pool[idx];
+                set(destX + i, destY + j, v);
+            }
+        }
+        else {
+            // 通常コピー
+            for(j in 0...srcH) {
+                for(i in 0...srcW) {
+                    var v = layer.get(srcX + i, srcY + j);
+                    set(destX + i, destY + j, v);
+                }
+            }
+        }
+
     }
 
     /**
