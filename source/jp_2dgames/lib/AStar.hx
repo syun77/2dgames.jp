@@ -1,6 +1,11 @@
 package jp_2dgames.lib;
 
+import jp_2dgames.lib.Array2D;
 import flixel.util.FlxPoint;
+
+// =================================================
+// 実装例はコードの最後に、sampleFindPath関数として実装
+// =================================================
 
 /**
  * ノードの状態
@@ -138,8 +143,8 @@ class AStar {
   // 通過できないチップ番号
   private var CHIP_COLLISION:Int = 1;
 
-  // 地形レイヤー
-  private var _layer:Array2D;
+  // 地形マップ情報
+  private var _map:Array2D;
   // 斜め移動を許可するかどうか
   private var _allowdiag:Bool = true;
   // オープンリスト
@@ -153,8 +158,8 @@ class AStar {
   /**
    * コンストラクタ
    **/
-  public function new(layer:Array2D, xgoal:Int, ygoal:Int, allowdiag:Bool=true) {
-    _layer = layer;
+  public function new(map:Array2D, xgoal:Int, ygoal:Int, allowdiag:Bool=true) {
+    _map = map;
     _allowdiag = allowdiag;
     _openList = new List<ANode>();
     _pool = new Map<Int,ANode>();
@@ -166,7 +171,7 @@ class AStar {
    * ノードを生成する
    **/
   public function getNode(x:Int, y:Int):ANode {
-    var idx = _layer.toIdx(x, y);
+    var idx = _map.toIdx(x, y);
     if(_pool.exists(idx)) {
       // すでに存在しているのでプーリングから取得
       return _pool[idx];
@@ -199,11 +204,11 @@ class AStar {
    **/
   public function openNode(x:Int, y:Int, cost:Int, parent:ANode):ANode {
     // 座標をチェックする
-    if(_layer.check(x, y) == false) {
+    if(_map.check(x, y) == false) {
       // 領域外
       return null;
     }
-    if(_layer.get(x, y) != CHIP_NONE) {
+    if(_map.get(x, y) != CHIP_NONE) {
       // 通過できない
       return null;
     }
@@ -279,5 +284,54 @@ class AStar {
     }
 
     return minNode;
+  }
+
+  /**
+   * A*による経路探索の実装例
+   * @param map    マップ情報。CHIP_NONE(0)でなければ移動できない
+   * @param xstart 開始座標(X)
+   * @param ystart 終了座標(Y)
+   * @param xgoal  ゴール座標(X)
+   * @param ygoal  ゴール座標(Y)
+   * @return 経路の座標リスト
+   **/
+  public static function sampleFindPath(map:Array2D, xstart:Int, ystart:Int, xgoal:Int, ygoal:Int):Array<FlxPoint> {
+
+    // A*計算オブジェクト生成
+    var astar = new AStar(map, xgoal, ygoal, false);
+    // スタート地点のノード作成
+    // スタート地点なのでコストは0
+    var node = astar.openNode(xstart, ystart, 0, null);
+    if(node == null) {
+      // スタート地点が不正
+      return null;
+    }
+    astar.addOpenList(node);
+
+    // 試行回数。1000回超えたら強制中断
+    var cnt = 0;
+    while(cnt < 1000) {
+      astar.removeOpenList(node);
+      // 周囲を開く
+      astar.openAround(node);
+      // 最小スコアのノードを探す
+      node = astar.searchMinScoreNodeFromOpenList();
+      if(node == null) {
+        // 袋小路なのでおしまい
+        return null;
+      }
+      if(node.x == xgoal && node.y == ygoal) {
+        // ゴールにたどり着いた
+        astar.removeOpenList(node);
+        //        node.dumpRecursive();
+        // パスを取得する
+        var pList = node.getPath(new Array<FlxPoint>());
+        // 反転する
+        pList.reverse();
+        return pList;
+      }
+    }
+
+    return null;
   }
 }
