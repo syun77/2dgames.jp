@@ -1,5 +1,6 @@
 package;
 
+import jp_2dgames.game.StateMain;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.Lib;

@@ -1,4 +1,4 @@
-package jp_2dgames;
+package jp_2dgames.lib;
 
 import StringTools;
 import flixel.FlxG;
@@ -7,11 +7,12 @@ import openfl.Assets;
 /**
  * CSV読み込みクラス
  **/
-class CsvLoader2 {
+class CsvLoader {
 
     private var _filepath:String = "";
     private var _header: Array<String>;
-    private var _datas: Array<Map<String, String>>;
+    private var _types: Array<String>;
+    private var _datas: Map<Int, Map<String, String>>;
 
     public function new(filepath:String = null) {
         if(filepath != null) {
@@ -24,7 +25,7 @@ class CsvLoader2 {
      * @param filepath CSVのファイルパス
      **/
     public function load(filepath:String):Void {
-        _datas = new Array<Map<String, String>>();
+        _datas = new Map<Int, Map<String, String>>();
         var text:String = Assets.getText(filepath);
         if(text == null) {
             FlxG.log.warn("CsvLoader.load() text is null. file:'" + filepath + "''");
@@ -39,6 +40,8 @@ class CsvLoader2 {
             switch(row) {
             case 0:
                 _header = line.split(",");
+            case 1:
+                _types = line.split(",");
             default:
                 var nId = 0;
                 var col = 0;
@@ -55,7 +58,7 @@ class CsvLoader2 {
                     data.set(k, v);
                     col++;
                 }
-                _datas.push(data);
+                _datas.set(nId, data);
             }
             row++;
         }
@@ -66,7 +69,11 @@ class CsvLoader2 {
      * @return データ数
      **/
     public function size():Int {
-        return _datas.length;
+        var cnt:Int = 0;
+        for(k in _datas.keys()) {
+            cnt++;
+        }
+        return cnt;
     }
 
     /**
@@ -75,10 +82,14 @@ class CsvLoader2 {
      * @return 存在すればtrue
      **/
     public function hasId(id:Int):Bool {
-        if(id < 0 || _datas.length <= id) {
-            return false;
-        }
-        return true;
+        return _datas.exists(id);
+    }
+
+    /**
+     * id配列を取得する
+     **/
+    public function keys():Iterator<Int> {
+        return _datas.keys();
     }
 
     /**
@@ -88,10 +99,10 @@ class CsvLoader2 {
      * @return 値
      **/
     public function getString(id:Int, key:String):String {
-        if(hasId(id) == false) {
+        if(_datas.exists(id) == false) {
             throw "Error: Not found id = " + id;
         }
-        var data:Map<String, String> = _datas[id];
+        var data:Map<String, String> = _datas.get(id);
         if(data.exists(key) == false) {
             throw "Error: Not found key = " + key;
         }
@@ -103,12 +114,11 @@ class CsvLoader2 {
      * @return 見つからなかったら-1
      **/
     public function searchID(key:String, value:String):Int {
-        var i:Int = 0;
-        for(data in  _datas) {
+        for(k in  _datas.keys()) {
+            var data = _datas[k];
             if(data[key] == value) {
-                return i;
+                return k;
             }
-            i++;
         }
 
         return -1;
@@ -119,7 +129,8 @@ class CsvLoader2 {
      * @return 見つからなかったらエラー
      **/
     public function searchItem(key:String, name:String, item:String):String {
-        for(data in _datas) {
+        for(k in _datas.keys()) {
+            var data = _datas[k];
             if(data[key] == name) {
                 return data[item];
             }
@@ -141,7 +152,7 @@ class CsvLoader2 {
      **/
     public function foreachSearchID(func:Map<String,String>->Bool):Int {
         for(i in  0...size()+1) {
-            if(hasId(i) == false) {
+            if(_datas.exists(i) == false) {
                 continue;
             }
             var data = _datas[i];
@@ -179,7 +190,12 @@ class CsvLoader2 {
         trace(str);
 
         str = "";
-        for(data in _datas) {
+        for(s in _types) {
+            str += s + ",";
+        }
+        trace(str);
+        for(k in _datas.keys()) {
+            var data = _datas.get(k);
             str = "";
             for(d in data) {
                 str += d + ",";

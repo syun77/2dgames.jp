@@ -1,4 +1,4 @@
-package jp_2dgames;
+package jp_2dgames.lib;
 
 
 /**
